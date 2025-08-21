@@ -1,0 +1,143 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model reservations{
+  id_resertion Int @id @default(autoincrement())
+  id_reserve_state Int 
+  reserve_state reserved_states @relation(fields: [id_reserve_state], references: [id_reserve_state]) 
+  date_state DateTime @default(now())
+  id_user Int
+  user users @relation(fields: [id_user], references: [id_user])
+  id_package_touristic Int
+  package_touristic packages_touristics @relation(fields: [id_package_touristic], references: [id_package_touristic])
+  payment payments[]
+}
+
+model activities{
+  id_activity Int @id @default(autoincrement())
+  name_activity String
+  description_activity String
+  package_avtivity packages_activities[]
+}
+
+model packages_activities{
+  id_package_activity Int @id @default(autoincrement())
+  id_ativity Int
+  activity activities @relation(fields: [id_ativity], references: [id_activity])
+}
+
+model places_recreationals{
+  id_place_recreational Int @id @default(autoincrement())
+  geographical_location String
+  email_place_recreational String @unique
+  place_name String
+  id_user Int
+  user users @relation(fields: [id_user], references: [id_user])
+  package_touristic packages_touristics[]
+}
+
+model packages_touristics{
+  id_package_touristic Int @id @default(autoincrement()) 
+  name_package_touristic String
+  description_package_touristic String
+  days_durations DateTime
+  price_package_touristic Int
+  id_place_recreational Int
+  place_recreational places_recreationals @relation(fields: [id_place_recreational], references: [id_place_recreational])
+  reservations reservations[]
+}
+
+model payments{
+  id_payment Int @id @default(autoincrement())
+  amount Int
+  method String
+  payment_date DateTime @default(now())
+  id_reservation Int
+  reservation reservations @relation(fields: [id_reservation], references: [id_resertion])
+}
+
+model types_documents{
+  id_type_document Int @id @default(autoincrement())
+  ducument_name String
+  user users[]
+}
+
+model users{
+  id_user Int @id @default(autoincrement())
+  name_user String
+  lastname_user String
+  number_document Int
+  id_type_document Int
+  type_ducument types_documents @relation(fields: [id_type_document], references: [id_type_document])
+  date_birth DateTime
+  direction_user String
+  email_user String
+  id_role_user Int
+  role_user roles_users @relation(fields: [id_role_user], references: [id_role_user])
+  admin admins[]
+  traveler travelers[]
+  admin_place admins_places[]
+  reservations reservations[]
+  place_recreational places_recreationals[]
+  logistic_agent logistics_agents[]
+}
+
+model roles_users{
+  id_role_user Int @id @default(autoincrement())
+  user users[]
+  id_admin Int @unique
+  admin admins[]
+  id_traveler Int @unique
+  traveler travelers[]
+  id_admin_place Int @unique
+  admin_place admins_places[]
+  id_logistic_agent Int @unique
+  logistic_agent logistics_agents[]
+}
+
+model admins{
+  id_admin Int @id @default(autoincrement())
+  role_user roles_users @relation(fields: [id_admin], references: [id_admin])
+  id_user Int
+  user users @relation(fields: [id_user], references: [id_user])
+}
+
+model travelers{
+  id_traveler Int @id @default(autoincrement())
+  role_user roles_users @relation(fields: [id_traveler], references: [id_traveler])
+  id_user Int
+  user users @relation(fields: [id_user], references: [id_user])
+}
+
+model admins_places{
+  id_admin_place Int @id @default(autoincrement())
+  role_user roles_users @relation(fields: [id_admin_place], references: [id_admin_place])
+  id_user Int
+  user users @relation(fields: [id_user], references: [id_user])
+}
+
+model logistics_agents{
+  id_logistic_agent Int @id @default(autoincrement())
+  role_user roles_users @relation(fields: [id_logistic_agent], references: [id_logistic_agent])
+  id_user Int
+  user users @relation(fields: [id_user], references: [id_user])
+}
+
+model reserved_states{
+  id_reserve_state Int @id @default(autoincrement())
+  state_name String
+  reservations reservations[]
+}
