@@ -1,55 +1,34 @@
-import { Controller, 
-         Delete, 
-         Get, 
-         Param, 
-         Patch, 
-         Post } from '@nestjs/common';
-import path from 'path';
+import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { AdminsService } from './admins.service';
+import { CreateAdminDto } from './dto/create-admin.dto';
+import { UpdateAdminDto } from './dto/update-admin.dto';
 
-@Controller("admins")
+@Controller('admins')
 export class AdminsController {
-  
-
-  //endpoint:
-  //destino de la request
-  //se escribe como una funcion
-  //en una clase controlador
-  @Get()
-  consultarAdmins(): string {
-    return("Aquí se podrán consultar los usuarios");
-  }
-
-  @Get(":id")
-  consultarAdminPorId(@Param("id")id:string){
-    return(`Aquí se podrá consultar el 
-      usuario con id:${id}`);
-  }
-
-  @Patch(":id")
-  actualizarAdminPorId(@Param("id")id:string):string{
-    return(`Aquí se podrá actualizar el 
-      usuario cuyo id es:${id}`);
-  }
-
-  @Delete(":id")
-  eliminarAdminPorId(@Param("id")id:string):string{
-    return(`Aquí se podrá eliminar el 
-      usuario cuyo id es:${id}`);
-  }
+  constructor(private readonly adminsService: AdminsService) {}
 
   @Post()
-  crearAdmin(): string {
-    return("Aquí se podrá registrar los usuarios");
+  create(@Body() createAdminDto: CreateAdminDto) {
+    return this.adminsService.create(createAdminDto);
   }
 
-  @Patch()
-  actualizarAdmin(): string {
-    return("Aquí se podrá actualizar los usuarios");
+  @Get()
+  findAll() {
+    return this.adminsService.findAll();
   }
 
-  @Delete()
-  eliminarAdmin(): string {
-    return("Aquí se podrá eliminar los usuarios");
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.adminsService.findOne(+id);
   }
 
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() updateAdminDto: UpdateAdminDto) {
+    return this.adminsService.update(+id, updateAdminDto);
+  }
+
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.adminsService.remove(+id);
+  }
 }
